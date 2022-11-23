@@ -11,15 +11,17 @@ class Builder:
     def __call__(self):
         data_relationship=self.data_relationship[self.data_relationship.relationship_id=='Is a']
         data_merge=data_relationship.merge(self.data_concept, left_on='concept_id_1', right_on='concept_id', how='left')
-        data_merge_2=data_merge.merge(self.data_concept, left_on='concept_id_2', right_on='concept_id', how='left')      
+        data_merge_2=data_merge.merge(self.data_concept, left_on='concept_id_2', right_on='concept_id', how='left')   
+        data_merge_2=data_merge_2[data_merge_2.standard_concept_x=='S'][data_merge_2.standard_concept_y=='S']
         data_with_relationships=data_merge_2[['concept_id_1', 'concept_name_x', 'concept_id_2', 'concept_name_y', 'relationship_id']]
         for row_id, row in data_with_relationships.iterrows():
-            yield (row['concept_id_1'], row['concept_id_2'])
+            yield (row['concept_name_x'], row['concept_name_y'])
 
     def get_dataframe(self):
         data_relationship=self.data_relationship[self.data_relationship.relationship_id=='Is a']
         data_merge=data_relationship.merge(self.data_concept, left_on='concept_id_1', right_on='concept_id', how='left')
-        data_merge_2=data_merge.merge(self.data_concept, left_on='concept_id_2', right_on='concept_id', how='left')      
+        data_merge_2=data_merge.merge(self.data_concept, left_on='concept_id_2', right_on='concept_id', how='left')
+        data_merge_2=data_merge_2[data_merge_2.standard_concept_x=='S'][data_merge_2.standard_concept_y=='S']      
         data_with_relationships=data_merge_2[['concept_id_1', 'concept_name_x', 'concept_id_2', 'concept_name_y', 'relationship_id']]
         return data_with_relationships
 

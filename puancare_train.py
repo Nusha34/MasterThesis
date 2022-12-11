@@ -10,8 +10,8 @@ class Trainer:
     def trainer(self, epochs):
         relations=Builder(self.path_relationship, self.path_concept)
         relations=list(relations())
-        model = PoincareModel(relations, size=2, burn_in=10)
+        model = PoincareModel(relations, size=5, burn_in=10)
         model.train(epochs=epochs)
-        model.save('test_model')
+        model.save('model_5d')
         return model
         

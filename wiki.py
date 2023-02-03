@@ -23,7 +23,7 @@ def download_file(url, file):
 
 
 def download_wiki_dump(lang, path):
-    url = 'https://dumps.wikimedia.org/{lang}wiki/latest/{lang}wiki-latest-pages-articles-multistream.xml.bz2'
+    url = 'https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2'
     if not os.path.exists(path):
         download_file(url.format(lang=lang), path)
     else:

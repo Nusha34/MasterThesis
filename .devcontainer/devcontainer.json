@@ -9,7 +9,10 @@
 	"features": {
 		"ghcr.io/devcontainers/features/anaconda:1": {},
 		"ghcr.io/devcontainers/features/conda:1": {}
-	}
+	},
+	"mounts": [
+		"source=/nextcloud/data,target=/workspaces/master_thesis/data,type=bind,consistency=cached"
+	  ]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},

@@ -5,8 +5,8 @@ class Builder:
     def __init__(self, path_relationship: str, path_concept: str):
         self.path_relationship=path_relationship
         self.path_concept=path_concept
-        self.data_relationship=pd.read_csv(path_relationship, sep='\t')
-        self.data_concept = pd.read_csv(path_concept, sep='\t')
+        self.data_relationship=pd.read_csv(path_relationship, on_bad_lines='skip', sep='\t')
+        self.data_concept = pd.read_csv(path_concept, on_bad_lines='skip', sep='\t')
 
     def __call__(self):
         data_relationship=self.data_relationship[self.data_relationship.relationship_id=='Is a']

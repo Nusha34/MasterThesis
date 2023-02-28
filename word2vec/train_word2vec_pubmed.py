@@ -7,7 +7,7 @@ from gensim.models.word2vec import Word2Vec
 if __name__ == "__main__":
     logging.basicConfig(format="[%(asctime)s] %(message)s", level=logging.INFO)
     logging.info("Pubmed parsing")
-    pubmed_sentences=p.PubMedSentences('/workspaces/master_thesis/data/pubmed_corpus/')
+    pubmed_sentences=p.PubMedSentences('/workspaces/master_thesis/data/pubmed/pubmedxml/')
     logging.info("Save pubmed corpus")
     with open("pubmed_corpus_full", "wb") as fp: 
         pickle.dump(pubmed_sentences, fp)

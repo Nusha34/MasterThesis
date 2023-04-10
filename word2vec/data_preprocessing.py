@@ -1,6 +1,6 @@
-import spacy    
-    
+import spacy  
 
+    
 class Preprocessor:   
     """
     Class to prepare a corpus

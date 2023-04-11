@@ -17,5 +17,5 @@ if __name__ == "__main__":
     )
     logging.info("Training done.")
     logging.info("Save model")
-    model.save("word2vec_pubmed.model")
+    model.save("word2vec_pubmed_withstemming.model")
     logging.info("Done")

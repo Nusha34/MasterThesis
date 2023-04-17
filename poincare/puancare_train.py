@@ -5,13 +5,13 @@ from gensim.models.poincare import PoincareModel
 class Trainer:
     def __init__(self, path_relationship: str, path_concept: str):
         self.path_relationship=path_relationship
-        self.path_concept=path_concept
+        self.path_concept=path_concepdt
 
     def trainer(self, epochs):
         relations=Builder(self.path_relationship, self.path_concept)
         relations=list(relations())
-        model = PoincareModel(relations, size=100, burn_in=10)
+        model = PoincareModel(relations, size=300, burn_in=10)
         model.train(epochs=epochs)
-        model.save('poincare_100d_preprocessed')
+        model.save('poincare_300d_preprocessed')
         return model
         

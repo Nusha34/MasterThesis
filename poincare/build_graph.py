@@ -18,8 +18,8 @@ class Builder:
         data_merge_2=data_merge_2[data_merge_2.standard_concept_x=='S'][data_merge_2.standard_concept_y=='S']
         data_with_relationships=data_merge_2[['concept_id_1', 'concept_name_x', 'concept_id_2', 'concept_name_y', 'relationship_id']]
         for row_id, row in data_with_relationships.iterrows():
-            concept_x = self.preprocessing(row['concept_name_x'])
-            concept_y = self.preprocessing(row['concept_name_y'])
+            concept_x = row['concept_id_1']
+            concept_y = row['concept_id_2']
             yield (concept_x, concept_y)
 
     def preprocessing(self, sample):

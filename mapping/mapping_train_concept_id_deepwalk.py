@@ -9,11 +9,11 @@ import torch.nn as nn
 
 
 class PhraseEmbeddingDataset(Dataset):
-    def __init__(self, X, y, w2v_model, poincare_model, max_len=20):
+    def __init__(self, X, y, w2v_model, deepwalk_model, max_len=20):
         self.X = X
         self.y = y
         self.w2v_model = w2v_model
-        self.poincare_model = poincare_model
+        self.deepwalk_model = deepwalk_model
         self.max_len = max_len
 
     def __len__(self):
@@ -24,7 +24,7 @@ class PhraseEmbeddingDataset(Dataset):
         X = self.get_phrase_vector(self.X.iloc[idx], self.w2v_model, self.max_len)
         
         # Get Poincare embedding
-        y = torch.tensor(self.poincare_model.kv[self.y.iloc[idx]], dtype=torch.float)
+        y = torch.tensor(self.deepwalk_model.wv[str(self.y.iloc[idx])], dtype=torch.float)
 
         return X, y
 
@@ -40,8 +40,7 @@ class PhraseEmbeddingDataset(Dataset):
         phrase_vector = phrase_vector.flatten()
         
         return torch.tensor(phrase_vector, dtype=torch.float)
-
-
+    
 class BiLSTM(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(BiLSTM, self).__init__()
@@ -60,74 +59,53 @@ class BiLSTM(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
 
-def hyporbolic_distance(x,y):
-    #calculate hyporbolic distance between two vectors
-    return np.arccosh(1 + 2 * np.linalg.norm(x-y)**2 / ((1 - np.linalg.norm(x)**2) * (1 - np.linalg.norm(y)**2)))
 
 
 if __name__ == '__main__':
     df = pd.read_csv('/workspaces/master_thesis/mapping/data_ready_to_use.csv')
     df=df.dropna()
     w2v_model = Word2Vec.load("/workspaces/master_thesis/word2vec_pubmed.model")
-    #poincare_model = PoincareModel.load('/workspaces/master_thesis/poincare_100d_preprocessed')
-    poincare_model = PoincareModel.load('/workspaces/master_thesis/poincare_100d_concept_id')
+    deepwalk_model = Word2Vec.load("/workspaces/master_thesis/deepwalk_snomed.model")
     # Split your phrases into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(df['preprocessed_synonyms_without_stemming'], df['concept_id'], test_size=0.2, random_state=42)
 
     # Create your datasets
-    train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, poincare_model)
-    test_dataset = PhraseEmbeddingDataset(X_test, y_test, w2v_model, poincare_model)
+    train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, deepwalk_model)
+    test_dataset = PhraseEmbeddingDataset(X_test, y_test, w2v_model, deepwalk_model)
 
     # Create your data loaders
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
-    #load the model
     model = BiLSTM(input_size=300, hidden_size=300, output_size=100)
-    model.load_state_dict(torch.load('/workspaces/master_thesis/model_50epochs_conceptid.ckpt'))
-    #device
+    criterion = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    # Move model to GPU if available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.eval()
-    k_values = [1, 5, 10, 20, 50]
-    accuracy_values = []
+    model = model.to(device)
 
-    with torch.no_grad():
-        # Load all data into memory
-        inputs_all = []
-        labels_all = []
-        for inputs, labels in test_loader:
+    # Define the number of epochs
+    num_epochs = 50
+
+    # Training loop
+    for epoch in range(num_epochs):
+        for i, (inputs, labels) in enumerate(train_loader):
             inputs = inputs.to(device)
             labels = labels.to(device)
-            inputs_all.append(inputs)
-            labels_all.append(labels)
 
-        inputs_all = torch.cat(inputs_all)
-        labels_all = torch.cat(labels_all)
+            # Forward pass
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
 
-        # Compute outputs for all data
-        outputs_all = model(inputs_all)
-        outputs_all = outputs_all.cpu().numpy()
-        labels_all = labels_all.cpu().numpy()
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-        for k in k_values:
-            print(k)
-            correct = 0
-            total = 0
-            for i in range(len(outputs_all)):
-                distances = []
-                for j in range(len(labels_all)):
-                    distances.append(hyporbolic_distance(outputs_all[i], labels_all[j]))
-                # get the indices of the k nearest neighbors
-                indices = np.argsort(distances)[:k]
-                # get the labels of the k nearest neighbors
-                nearest_neighbors = labels_all[indices]
-                # check if the true label is among the k nearest neighbors
-                true_label = labels_all[i]
-                if true_label in nearest_neighbors:
-                    correct += 1
-                total += 1
-            accuracy = correct / total
-            accuracy_values.append(accuracy)
+            if (i+1) % 1000 == 0:
+                print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}' 
+                       .format(epoch+1, num_epochs, i+1, len(train_loader), loss.item()))
 
-    for i, accuracy in zip(k_values, accuracy_values):
-        print(f"Accuracy for k={i}: {accuracy * 100}%")
+    # Save the model checkpoint
+    torch.save(model.state_dict(), 'model_50epochs_conceptid_deepwalk.ckpt')
+

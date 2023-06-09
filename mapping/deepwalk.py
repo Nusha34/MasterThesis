@@ -1,11 +1,11 @@
 import logging
 import random
-from build_graph import Builder
 import pandas as pd
 from gensim.models import Word2Vec
 import networkx as nx
 import sys
 sys.path.append('/workspaces/master_thesis/poincare')
+from build_graph import Builder
 
 
 logging.basicConfig(format="[%(asctime)s] %(message)s", level=logging.INFO)
@@ -29,6 +29,7 @@ relations = Builder('/workspaces/master_thesis/CONCEPT_RELATIONSHIP.csv',
 relations = list(relations())
 G = nx.Graph()
 G.add_edges_from(relations)
+print('Graph built')
 
 
 walk_paths = []
@@ -36,6 +37,8 @@ for node in G.nodes():
     for _ in range(10):
         walk_paths.append(get_random_walk(G, node))
 
+print('Walk paths built')
+print('Training model...')
 # Instantiate word2vec model
 embedder = Word2Vec(
     window=20, sg=1, hs=0, negative=10, alpha=0.03, min_alpha=0.0001,
@@ -48,5 +51,5 @@ embedder.train(
     walk_paths, total_examples=embedder.corpus_count, epochs=20,
     report_delay=1
 )
-
+print('Model trained')
 embedder.save('/workspaces/master_thesis/deepwalk_snomed.model')

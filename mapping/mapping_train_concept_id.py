@@ -64,18 +64,21 @@ class BiLSTM(nn.Module):
 if __name__ == '__main__':
     df = pd.read_csv('/workspaces/master_thesis/mapping/data_ready_to_use.csv')
     df=df.dropna()
-    w2v_model = Word2Vec.load("/workspaces/master_thesis/word2vec_pubmed.model")
+    w2v_model = Word2Vec.load("/workspaces/master_thesis/word2vec_pubmed_sg1.model")
     poincare_model = PoincareModel.load('/workspaces/master_thesis/poincare_100d_concept_id')
     # Split your phrases into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(df['preprocessed_synonyms_without_stemming'], df['concept_id'], test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(df['preprocessed_synonyms_without_stemming'], df['concept_id'], test_size=0.02, random_state=42)
 
     # Create your datasets
     train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, poincare_model)
     test_dataset = PhraseEmbeddingDataset(X_test, y_test, w2v_model, poincare_model)
+    print(len(train_dataset))
+    print(len(test_dataset))
 
     # Create your data loaders
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+
 
     model = BiLSTM(input_size=300, hidden_size=300, output_size=100)
     criterion = nn.MSELoss()
@@ -85,7 +88,7 @@ if __name__ == '__main__':
     model = model.to(device)
 
     # Define the number of epochs
-    num_epochs = 50
+    num_epochs = 100
 
     # Training loop
     for epoch in range(num_epochs):
@@ -107,5 +110,5 @@ if __name__ == '__main__':
                        .format(epoch+1, num_epochs, i+1, len(train_loader), loss.item()))
 
     # Save the model checkpoint
-    torch.save(model.state_dict(), 'model_50epochs_conceptid.ckpt')
+    torch.save(model.state_dict(), 'model_100epochs_conceptid_10000.ckpt')
 

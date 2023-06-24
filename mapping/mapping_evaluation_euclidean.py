@@ -73,7 +73,7 @@ if __name__ == '__main__':
     deepwalk_model = Word2Vec.load("/workspaces/master_thesis/deepwalk_snomed.model")
 
     # Split your phrases into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(df['preprocessed_synonyms_without_stemming'], df['concept_id'], test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(df['preprocessed_synonyms_without_stemming'], df['concept_id'], test_size=0.02, random_state=42)
 
     # Create your datasets
     train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, deepwalk_model)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
     #load the model
     model = BiLSTM(input_size=300, hidden_size=300, output_size=100)
-    model.load_state_dict(torch.load('/workspaces/master_thesis/model_50epochs_conceptid.ckpt'))#replace with result
+    model.load_state_dict(torch.load('/workspaces/master_thesis/model_50epochs_conceptid_deepwalk_100000.ckpt'))#replace with result
     #device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.eval()

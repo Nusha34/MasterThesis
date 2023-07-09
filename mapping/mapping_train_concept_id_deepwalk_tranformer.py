@@ -9,11 +9,11 @@ import torch.nn as nn
 
 
 class PhraseEmbeddingDataset(Dataset):
-    def __init__(self, X, y, w2v_model, poincare_model, max_len=20):
+    def __init__(self, X, y, w2v_model, deepwalk_model, max_len=20):
         self.X = X
         self.y = y
         self.w2v_model = w2v_model
-        self.poincare_model = poincare_model
+        self.deepwalk_model = deepwalk_model
         self.max_len = max_len
 
     def __len__(self):
@@ -24,7 +24,7 @@ class PhraseEmbeddingDataset(Dataset):
         X = self.get_phrase_vector(self.X.iloc[idx], self.w2v_model, self.max_len)
 
         # Get Poincare embedding
-        y = torch.tensor(self.poincare_model.kv[self.y.iloc[idx]], dtype=torch.float)
+        y = torch.tensor(self.deepwalk_model.wv[str(self.y.iloc[idx])], dtype=torch.float)
 
         return X, y
 
@@ -73,20 +73,14 @@ if __name__ == "__main__":
     df = pd.read_csv("/workspaces/master_thesis/mapping/data_ready_to_use.csv")
     df = df.dropna()
     w2v_model = Word2Vec.load("/workspaces/master_thesis/word2vec_pubmed_sg1.model")
-    poincare_model = PoincareModel.load(
-        "/workspaces/master_thesis/poincare_100d_concept_id"
-    )
+    deepwalk_model = Word2Vec.load("/workspaces/master_thesis/deepwalk_snomed.model")
     # Split your phrases into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(
-        df["preprocessed_synonyms_without_stemming"],
-        df["concept_id"],
-        test_size=0.2,
-        random_state=42,
-    )
+    X_train, X_test, y_train, y_test = train_test_split(df['preprocessed_synonyms_without_stemming'], df['concept_id'], test_size=0.2, random_state=42)
 
     # Create your datasets
-    train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, poincare_model)
-    test_dataset = PhraseEmbeddingDataset(X_test, y_test, w2v_model, poincare_model)
+    train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, deepwalk_model)
+    test_dataset = PhraseEmbeddingDataset(X_test, y_test, w2v_model, deepwalk_model)
+
     print(len(train_dataset))
     print(len(test_dataset))
 
@@ -125,4 +119,4 @@ if __name__ == "__main__":
                 )
 
     # Save the model checkpoint
-    torch.save(model.state_dict(), "model_50epochs_conceptid_tranformers.ckpt")
+    torch.save(model.state_dict(), "model_50epochs_conceptid_deepwalk_tranformers.ckpt")

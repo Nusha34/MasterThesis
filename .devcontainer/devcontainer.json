@@ -1,31 +1,43 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/anaconda
 {
-	"name": "Anaconda (Python 3)",
-	"build": { 
+	"name": "Python 3",
+	"build": {
+		"dockerfile": "/home/nusha/projects/master_thesis/.devcontainer/Dockerfile",
 		"context": "..",
-		"dockerfile": "Dockerfile"
+		"args": {
+			// Select your PyTorch version from https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes
+			"PYTORCH_VERSION": "22.06-py3",
+			"INSTALL_VSCODE": "1"
+		}
+	},
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/opt/conda/bin/python",
+				"python.linting.enabled": true,
+				"python.linting.pylintEnabled": true,
+				"python.linting.flake8Enabled": true,
+				"python.formatting.provider": "black",
+				"editor.formatOnSave": true,
+				"python.formatting.blackPath": "/opt/conda/bin/black",
+				"python.linting.flake8Path": "/opt/conda/bin/flake8",
+				"python.linting.pylintPath": "/opt/conda/bin/pylint"
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance"
+			]
+		}
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/anaconda:1": {},
-		"ghcr.io/devcontainers/features/conda:1": {}
+		"git": "os-provided"
 	},
-	"mounts": [
-		"source=/nextcloud/data,target=/workspaces/master_thesis/data,type=bind,consistency=cached"
-	  ]
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "python --version",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	// We must instruct Docker to use the GPUs
+	"runArgs": [
+		"--gpus",
+		"all"
+	],
+	// The seems to be some ownership issue
+	"postCreateCommand": "git config --global --add safe.directory /workspaces/gpu_docker"
 }

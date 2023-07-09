@@ -1,7 +1,7 @@
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from gensim.models import Word2Vec
-#from gensim.models.poincare import PoincareModel
+from gensim.models.poincare import PoincareModel
 import pandas as pd
 import numpy as np
 import torch
@@ -42,22 +42,22 @@ class PhraseEmbeddingDataset(Dataset):
         return torch.tensor(phrase_vector, dtype=torch.float)
 
 
-class BiLSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(BiLSTM, self).__init__()
+class TransformerModel(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size, nhead=10, num_layers=2):
+        super(TransformerModel, self).__init__()
+
         self.hidden_size = hidden_size
-        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True, bidirectional=True)
-        self.fc = nn.Linear(hidden_size * 2, output_size)  # 2 for bidirection
+        encoder_layers = nn.TransformerEncoderLayer(d_model=input_size, nhead=nhead, dim_feedforward=hidden_size)
+        self.transformer = nn.TransformerEncoder(encoder_layers, num_layers)
+        self.fc = nn.Linear(input_size, output_size)  # Adjusting the input dimension of the FC layer to match the output of the TransformerEncoder
 
     def forward(self, x):
-        # Reshape the input to (batch_size, seq_len, features)
-        x = x.view(x.size(0), 20, 300)
-
-        # Forward propagate LSTM
-        out, _ = self.lstm(x)  # out: tensor of shape (batch_size, seq_length, hidden_size*2)
-
+        # Reshape the input to (seq_len, batch_size, features)
+        x = x.view(20, x.size(0), 300)  # TransformerEncoder expects (seq_len, batch_size, features)
+        # Forward propagate transformer
+        out = self.transformer(x)  # out: tensor of shape (seq_len, batch_size, hidden_size)
         # Decode the hidden state of the last time step
-        out = self.fc(out[:, -1, :])
+        out = self.fc(out[-1])
         return out
 
 def euclidean_distance(x,y):
@@ -69,7 +69,6 @@ if __name__ == '__main__':
     df=df.dropna()
     w2v_model = Word2Vec.load("/workspaces/master_thesis/word2vec_pubmed.model")
     #poincare_model = PoincareModel.load('/workspaces/master_thesis/poincare_100d_preprocessed')
-    #poincare_model = PoincareModel.load('/workspaces/master_thesis/poincare_100d_concept_id')
     deepwalk_model = Word2Vec.load("/workspaces/master_thesis/deepwalk_snomed.model")
 
     # Split your phrases into training and test sets
@@ -78,17 +77,19 @@ if __name__ == '__main__':
     # Create your datasets
     train_dataset = PhraseEmbeddingDataset(X_train, y_train, w2v_model, deepwalk_model)
     test_dataset = PhraseEmbeddingDataset(X_test, y_test, w2v_model, deepwalk_model)
-
+    print(len(train_dataset))
+    print(len(test_dataset))
     # Create your data loaders
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
-
     #load the model
-    model = BiLSTM(input_size=300, hidden_size=300, output_size=100)
-    model.load_state_dict(torch.load('/workspaces/master_thesis/model_50epochs_conceptid_deepwalk.ckpt'))#replace with result
+    model = TransformerModel(300, 300, 100)
+    model.load_state_dict(torch.load('/workspaces/master_thesis/model_50epochs_conceptid_deepwalk_tranformers.ckpt'))
     #device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
     model.eval()
+    print(device)
     k_values = [1, 5, 10, 20, 50]
     accuracy_values = []
 

@@ -2,7 +2,7 @@ import logging
 import random
 import pandas as pd
 from gensim.models import Word2Vec
-import networkx as nx
+import eas nx
 import sys
 sys.path.append('/workspaces/master_thesis/poincare')
 from build_graph import Builder

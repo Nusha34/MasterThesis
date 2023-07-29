@@ -1,1 +1,1 @@
-# Master thesis **"Supporting semantic mapping towards clinical terminologies with deep learning."**
+# Title: "Supporting semantic mapping towards clinical terminologies with deep learning."

@@ -363,5 +363,4 @@ results/*
 *.csv 
 *.model
 *.bz2
-*.txt
 *.npy

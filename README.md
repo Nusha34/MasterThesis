@@ -7,20 +7,20 @@ This project utilizes Docker for providing an OS-independent development and int
 
 ```
 |- biobert/ (Experiments with biobert)
-|- combination_three_methods/ (this folder contains jupiter notebook with pipeline to combine results from TF-IDF, Poincare and DeepWalk)
-|- experimenting_embedding_fusion/  (this folder contains experiments of fusion during training of both hierachical and semantical embeddings)
-|- mapping/ (Mapping between semnatical embedding and hierachical embedding)
+|- combination_three_methods/ (this folder contains a jupiter notebook with the pipeline to combine results from TF-IDF, Poincare and DeepWalk)
+|- experimenting_embedding_fusion/  (this folder contains experiments of fusion during training of both hierarchical and semantical embeddings)
+|- mapping/ (Mapping between semantical embedding and hierarchical embedding)
     |- bilstm/ (Experiments with BiLSTM model)
         |- deepwalk/
         |- poincare/
     |- transformer/ (Experiments with Transformer models)
         |- deepwalk/
         |- poincare/
-|- hierachical_structure/ (Experiments of learning hierachical structure of the SNOMED CT within OMOP)
+|- hierachical_structure/ (Experiments of learning the hierarchical structure of the SNOMED CT within OMOP)
     |- deepwalk/
     |- node2vec/
     |- poincare/
-|- word2vec/ (Experiments of learning semntical relationships of English medical related data)
+|- word2vec/ (Experiments of learning semantical relationships of English medical-related data)
     |- pubmed/
     |- wiki/ 
 ```

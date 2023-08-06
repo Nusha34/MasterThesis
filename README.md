@@ -5,7 +5,7 @@ This project utilizes Docker for providing an OS-independent development and int
 
 ## Description
 We have conducted a series of different experiments in different directions: 
-1. Experiments in learning hierachical relationships of SNOMED CT and its evaluation (hierachical_embeddings/);
+1. [Experiments](hierachical_embeddings) in learning hierachical relationships of SNOMED CT and its evaluation (hierachical_embeddings/);
 2. Capturing semantical relationships with Word2Vec embedding, by training W2V on Pubmed and Wiki corpora and evaluate on analogy task and similarity/relatedness tasks (semantical_embeddings/)
 3. Mapping between semantical and hierachical spaces by using neural networks: Bi-LSTM and Tranformers (mapping_between_sem_hierachy/)
 

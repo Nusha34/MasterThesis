@@ -3,3 +3,7 @@ pandas
 gensim 
 spacy
 seaborn
+openpyxl
+torch 
+torchvision 
+torchaudio

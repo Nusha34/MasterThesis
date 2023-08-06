@@ -27,7 +27,7 @@ The following instruction is to be able to run the [Evaluation](mapping_between_
 ## Directory Structure
 
 ```
-**|- combination_three_methods/** (This folder contains a Jupiter notebook with the pipeline to combine results from TF-IDF, Poincare and DeepWalk)
+** |- combination_three_methods/ ** (This folder contains a Jupiter notebook with the pipeline to combine results from TF-IDF, Poincare and DeepWalk)
 **|- experimenting_embedding_fusion/**  (This folder contains experiments of fusion during training of both hierarchical and semantical embeddings. We did not use it in the final report)
 **|- mapping_between_sem_hierachy/** (Mapping between semantical embedding and hierarchical embedding)
     **|- bilstm/** (Experiments with BiLSTM model)

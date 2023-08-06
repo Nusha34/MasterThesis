@@ -361,6 +361,5 @@ data/*
 files_for_evaluation/*
 results/*
 *.csv 
-*.model
 *.bz2
-*.npy
+models/*

@@ -7,23 +7,25 @@ Standardizing medical data from diverse sources in healthcare research is a crit
 This project utilizes Docker for providing an OS-independent development and integration experience. We highly recommend using Visual Studio Code and the associated "Development Container" which allows direct access to an environment and shell with pre-installed Python, corresponding packages, and a specialized IDE experience. However, running Docker standalone is also possible by using the `Dockerfile` in the `devcontainer` folder. 
 
 ## Description
-We have conducted a series of different experiments in different directions: 
-1. [Experiments](hierachical_embeddings) in learning hierarchical relationships of SNOMED CT and its evaluation;
-2. [Capturing](semantical_embeddings) semantical relationships with Word2Vec embedding by training W2V on Pubmed and Wiki corpora and evaluate on analogy and similarity/relatedness tasks
-3. [Mapping](mapping_between_sem_hierachy) between semantical and hierarchical spaces by using neural networks: Bi-LSTM and Transformers
+During the course of our study, we conducted several specific experiments, each with a unique focus:
 
-We [evaluated](mapping_between_sem_hierachy/test_on_hchs_data.ipynb) the whole approach on the 19 medical phrases from the HCHS dataset. And then [combined](combination_three_methods/combination_of_results.ipynb) them using the strategy described in the report. 
+1. We performed [Experiments](hierachical_embeddings) to learn the hierarchical relationships in SNOMED CT and evaluate their effectiveness.
+2. We endeavoured to [Capture](semantical_embeddings) semantic relationships by training a Word2Vec model on PubMed and Wiki corpora and then put it to the test on analogy and similarity/relatedness tasks.
+3. We executed a [Mapping](mapping_between_sem_hierachy) task between semantic and hierarchical spaces using neural networks, such as Bi-LSTM and Transformers.
 
-We also run additional experiments not described directly in the thesis but are also available in this Repository.
+Apart from these main experiments, we also [Evaluated](mapping_between_sem_hierachy/test_on_hchs_data.ipynb) our overall method on a selection of 19 medical phrases from the HCHS dataset. The results were then [Combined](combination_three_methods/combination_of_results.ipynb) using the strategy detailed in the report.
+
+In addition to the core experiments, we conducted several additional tests not directly documented in the thesis but are nonetheless available in this Repository.
 
 
-## Instruction on how to easily Run the Jupyter Notebooks with final results: 
+## Below are the instructions for running the Jupyter Notebooks containing the final results:
 
-The following instruction is to be able to run the [Evaluation](mapping_between_sem_hierachy/test_on_hchs_data.ipynb) on samples from HCHS data and the [Combination](combination_three_methods/combination_of_results.ipynb) of three approaches.
-1. Download Standard Vocabulary from [Athena website](https://athena.ohdsi.org/search-terms/start) and change paths to files.
-2. Get a folder with models used in the final evaluation, which will be attached for the Master Thesis
-3. Change paths to these models in the notebooks 
-4. Run
+These steps allow you to execute the [Evaluation](mapping_between_sem_hierachy/test_on_hchs_data.ipynb) on samples from the HCHS data, and the [Combination](combination_three_methods/combination_of_results.ipynb) of the three methods:
+
+1. Download the Standard Vocabulary from the [Athena website](https://athena.ohdsi.org/search-terms/start) and adjust the file paths in Jupyter Notebooks accordingly.
+2. Obtain the folder containing the models used in the final evaluation. This folder will be attached to the submitted Master Thesis.
+3. Update the paths to these models in the notebooks.
+4. Run the notebooks.
 
 
 

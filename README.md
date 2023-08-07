@@ -9,11 +9,11 @@ This project utilizes Docker for providing an OS-independent development and int
 ## Description
 During the course of our study, we conducted several specific experiments, each with a unique focus:
 
-1. We performed [Experiments](hierachical_embeddings) to learn the hierarchical relationships in SNOMED CT and evaluate their effectiveness.
-2. We endeavoured to [Capture](semantical_embeddings) semantic relationships by training a Word2Vec model on PubMed and Wiki corpora and then put it to the test on analogy and similarity/relatedness tasks.
+1. We [learnt](hierachical_embeddings) the hierarchical relationships in SNOMED CT and evaluated their effectiveness.
+2. We [captured](semantical_embeddings) semantic relationships by training a Word2Vec model on PubMed and Wiki corpora and then put it to the test on analogy and similarity/relatedness tasks.
 3. We executed a [Mapping](mapping_between_sem_hierachy) task between semantic and hierarchical spaces using neural networks, such as Bi-LSTM and Transformers.
 
-Apart from these main experiments, we also [Evaluated](mapping_between_sem_hierachy/test_on_hchs_data.ipynb) our overall method on a selection of 19 medical phrases from the HCHS dataset. The results were then [Combined](combination_three_methods/combination_of_results.ipynb) using the strategy detailed in the report.
+Apart from these main experiments, we also [evaluated](mapping_between_sem_hierachy/test_on_hchs_data.ipynb) our overall method on a selection of 19 medical phrases from the HCHS dataset. The results were then [combined](combination_three_methods/combination_of_results.ipynb) using the strategy detailed in the report.
 
 In addition to the core experiments, we conducted several additional tests not directly documented in the thesis but are nonetheless available in this Repository.
 
